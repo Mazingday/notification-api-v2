@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@middlewares/*": [
+        "middlewares/*.middleware"
+      ],
+      "@services/*": [
+        "notifications/*.service",
+        "auth/*.service",
+        "id/*.service",
+        "./*.service"
+      ],
+      "@interfaces/*": [
+        "notifications/interfaces/*.interface",
+        "auth/interfaces/*.interface",
+        "id/interfaces/*.interface",
+        "./interfaces/*.interface"
+      ],
+      "@controllers/*": [
+        "notifications/*.controller",
+        "auth/*.controller",
+        "id/*.controller",
+        "./*.controller"
+      ],
+      "@modules/*": [
+        "notifications/*.module",
+        "auth/*.module",
+        "id/*.module",
+        "./*.module"
+      ],
+      "@dto/*": [
+        "notifications/dto/*.dto",
+        "auth/dto/*.dto",
+        "id/dto/*.dto",
+        "./dto/*.dto"
+      ],
+      "@schemas/*": [
+        "notifications/schemas/*.schema",
+        "./schemas/*.schema"
+      ],
+      "@enums/*": [
+        "notifications/utils/*.enum",
+      ],
+    }
+  }
+}

@@ -1,0 +1,51 @@
+version: '2'
+
+services:
+  db:
+    image: mongo:latest
+    container_name: ms-inappbilling-db
+    ports:
+      - "27017:27017"
+    command: ["-f", "/etc/mongod.conf"]
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_USERNAME: mongo
+      MONGO_INITDB_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: database
+    networks:
+      - mazingday
+    volumes:
+      - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+      - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+      - ./.docker/mongodb/data/db/:/data/db/
+      - ./.docker/mongodb/data/log/:/var/log/mongodb/
+
+  api:
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    container_name: ms-notifications
+    command: npm run start:prod
+    environment:
+      - HTTP_BASIC_USER
+      - HTTP_BASIC_PASS
+      - SWAGGER_USER
+      - SWAGGER_PASSWORD
+      - MONGO_DB_URL
+      - URL_API_ID_GENERATION
+      - PORT
+      - ONESIGNAL_APPID
+      - ONESIGNAL_APIKEY
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - mazingday
+
+networks:
+    mazingday:
