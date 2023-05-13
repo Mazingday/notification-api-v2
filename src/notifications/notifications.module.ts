@@ -6,6 +6,10 @@ import { NotificationSchema, Notification } from '@schemas/notification';
 import { FirebaseModule } from '../firebaseAPI/firebase.module';
 
 import { DeviceToken, DeviceTokenSchema } from '@schemas/deviceToken';
+import {
+  NotificationSchedule,
+  NotificationScheduleSchema,
+} from '@schemas/notificationSchedule';
 
 import { IdModule } from '@modules/id';
 
@@ -19,6 +23,10 @@ import { IdModule } from '@modules/id';
       {
         name: DeviceToken.name,
         schema: DeviceTokenSchema,
+      },
+      {
+        name: NotificationSchedule.name,
+        schema: NotificationScheduleSchema,
       },
     ]),
     IdModule,

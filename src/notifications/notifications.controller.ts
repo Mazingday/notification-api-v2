@@ -36,14 +36,17 @@ export class NotificationsController {
       priority: sendNotificationDto.priority,
       body: sendNotificationDto.body,
     };
-
+    let notification;
     if (sendNotificationDto.date) {
       notificationBody.send_after = sendNotificationDto.date;
+      notification = await this.notificationService.storeScheduleNotification(
+        notificationBody,
+      );
+    } else {
+      notification = await this.notificationService.sendNotification(
+        notificationBody,
+      );
     }
-
-    const notification = await this.notificationService.sendNotification(
-      notificationBody,
-    );
     if (notification === null)
       throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
     return res.status(HttpStatus.OK).json({ notification });

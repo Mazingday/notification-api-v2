@@ -46,5 +46,5 @@ export class SendNotificationDTO {
     example: '01-01-2001',
     description: 'Target date to send the notification',
   })
-  readonly date: string;
+  readonly date: Date;
 }

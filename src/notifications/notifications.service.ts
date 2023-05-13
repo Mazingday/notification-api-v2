@@ -3,6 +3,11 @@ import { Injectable } from '@nestjs/common';
 import mongoose, { ObjectId } from 'mongoose';
 import { Notification, NotificationDocument } from '@schemas/notification';
 import { DeviceToken, DeviceTokenDocument } from '@schemas/deviceToken';
+import {
+  NotificationSchedule,
+  NotificationScheduleDocument,
+} from '@schemas/notificationSchedule';
+
 import { FirebaseService } from '../firebaseAPI/firebase.service';
 import { CreateNotificationBody } from './dto/CreateNotificationBody';
 import { FirebaseDTO } from '../firebaseAPI/dto/firebaseNotification.dto';
@@ -17,6 +22,8 @@ export class NotificationsService {
     private readonly notificationsModel: Model<NotificationDocument>,
     @InjectModel(DeviceToken.name)
     private readonly deviceTokenModel: Model<DeviceTokenDocument>,
+    @InjectModel(NotificationSchedule.name)
+    private readonly notificationScheduleModel: Model<NotificationScheduleDocument>,
     private firebaseService: FirebaseService,
 
     private readonly idService: IdService,
@@ -31,6 +38,26 @@ export class NotificationsService {
       upsert: true,
     });
   }
+
+  async storeScheduleNotification(notificationBody: CreateNotificationBody) {
+    const tmpNotification: NotificationSchedule = new NotificationSchedule();
+    tmpNotification._id = (await this.idService.generateId('520')).id;
+    tmpNotification.body = notificationBody.body;
+    tmpNotification.title = notificationBody.title;
+    tmpNotification.text = notificationBody.title;
+    tmpNotification.priority = notificationBody.priority;
+    tmpNotification.creationDate = notificationBody.send_after;
+    tmpNotification.isDelevered = false;
+
+    return this.storeNotification(tmpNotification);
+  }
+
+  public async storeNotification(
+    notification: Partial<NotificationSchedule>,
+  ): Promise<NotificationSchedule> {
+    return this.notificationScheduleModel.create(notification);
+  }
+
   public async sendNotification(
     notificationBody: CreateNotificationBody,
   ): Promise<Notification> {
@@ -54,7 +81,6 @@ export class NotificationsService {
       tmpNotification.text = notificationBody.title;
       tmpNotification.priority = notificationBody.priority;
       tmpNotification.creationDate = new Date();
-      console.log(tmpNotification);
 
       tmpNotification.deliveryDate = notificationBody.send_after
         ? new Date(notificationBody.send_after)
