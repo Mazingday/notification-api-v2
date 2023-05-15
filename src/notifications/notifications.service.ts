@@ -38,6 +38,10 @@ export class NotificationsService {
       upsert: true,
     });
   }
+  async findByIdAndDelete(id: string | ObjectId) {
+
+    await this.deviceTokenModel.deleteOne({ _id: id });
+  }
 
   async storeScheduleNotification(notificationBody: CreateNotificationBody) {
     const tmpNotification: NotificationSchedule = new NotificationSchedule();

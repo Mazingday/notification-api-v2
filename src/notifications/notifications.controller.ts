@@ -61,12 +61,16 @@ export class NotificationsController {
     @Req() req,
     @Body() sendDeviceTokenDTO: SendDeviceTokenDTO,
   ) {
-    const { userId, token } = sendDeviceTokenDTO;
-
-    const user = await this.notificationService.findByIdAndUpdates(
-      userId,
-      token,
-    );
-    return res.status(HttpStatus.OK).json({ user });
+    const { userId, token, isdelete } = sendDeviceTokenDTO;
+    if (isdelete && !token) {
+      await this.notificationService.findByIdAndDelete(userId);
+      return res.status(HttpStatus.OK).json({ success: 'token deleted' });
+    } else {
+      const user = await this.notificationService.findByIdAndUpdates(
+        userId,
+        token,
+      );
+      return res.status(HttpStatus.OK).json({ user });
+    }
   }
 }

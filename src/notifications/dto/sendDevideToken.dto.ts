@@ -5,11 +5,15 @@ export class SendDeviceTokenDTO {
   @IsString()
   @MaxLength(64)
   @ValidateIf((o) => o.email == undefined || o.userId)
-  @ApiProperty({ example: 'title', description: 'Target user Device Token' })
+  @ApiProperty({ example: '123456', description: 'userId user Device Token' })
   readonly userId: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ example: 'title', description: 'Title of notification' })
+  @ApiProperty({ example: 'token', description: 'token of notification' })
   readonly token: string;
+
+  @IsOptional()
+  @ApiProperty({ example: 'true', description: 'delete token of notification' })
+  readonly isdelete: boolean;
 }
