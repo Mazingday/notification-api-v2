@@ -48,7 +48,9 @@ export class NotificationsController {
       );
     }
     if (notification === null)
-      throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
+      return res
+        .status(HttpStatus.OK)
+        .json({ notification: 'notification not send' });
     return res.status(HttpStatus.OK).json({ notification });
   }
 

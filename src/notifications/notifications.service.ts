@@ -39,7 +39,6 @@ export class NotificationsService {
     });
   }
   async findByIdAndDelete(id: string | ObjectId) {
-
     await this.deviceTokenModel.deleteOne({ _id: id });
   }
 
@@ -68,6 +67,7 @@ export class NotificationsService {
     console.log('----------------');
 
     const user = await this.deviceTokenModel.findById(notificationBody.user_id);
+    if (user == null) return null;
     const notifBody: FirebaseDTO = {
       to: user.token,
       priority: notificationBody.priority,
