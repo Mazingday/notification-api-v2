@@ -36,6 +36,10 @@ export class NotificationSchedule {
   text: string;
 
   @Prop()
+  @ApiProperty({ example: 'token ID', description: 'Token' })
+  to: string;
+
+  @Prop()
   @ApiProperty({ example: 'Test', description: 'Message' })
   body: string;
 

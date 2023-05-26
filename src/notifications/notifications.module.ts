@@ -5,7 +5,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { NotificationSchema, Notification } from '@schemas/notification';
 import { FirebaseModule } from '../firebaseAPI/firebase.module';
 
-import { DeviceToken, DeviceTokenSchema } from '@schemas/deviceToken';
+import {
+  notificationDatas,
+  NotificationDatasSchema,
+} from '@schemas/deviceToken';
 import {
   NotificationSchedule,
   NotificationScheduleSchema,
@@ -21,8 +24,8 @@ import { IdModule } from '@modules/id';
         schema: NotificationSchema,
       },
       {
-        name: DeviceToken.name,
-        schema: DeviceTokenSchema,
+        name: notificationDatas.name,
+        schema: NotificationDatasSchema,
       },
       {
         name: NotificationSchedule.name,

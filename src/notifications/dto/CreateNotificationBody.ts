@@ -7,4 +7,5 @@ export interface CreateNotificationBody {
   priority?: string;
   body?: any;
   send_after?: Date;
+  to?: string;
 }

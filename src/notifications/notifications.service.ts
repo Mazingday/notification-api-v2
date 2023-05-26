@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 // import * as OneSignal from 'onesignal-node';
 import mongoose, { ObjectId } from 'mongoose';
 import { Notification, NotificationDocument } from '@schemas/notification';
-import { DeviceToken, DeviceTokenDocument } from '@schemas/deviceToken';
+import {
+  notificationDatas,
+  NotificationDatasDocument,
+} from '@schemas/deviceToken';
 import {
   NotificationSchedule,
   NotificationScheduleDocument,
@@ -20,8 +23,8 @@ export class NotificationsService {
   constructor(
     @InjectModel(Notification.name)
     private readonly notificationsModel: Model<NotificationDocument>,
-    @InjectModel(DeviceToken.name)
-    private readonly deviceTokenModel: Model<DeviceTokenDocument>,
+    @InjectModel(notificationDatas.name)
+    private readonly deviceTokenModel: Model<NotificationDatasDocument>,
     @InjectModel(NotificationSchedule.name)
     private readonly notificationScheduleModel: Model<NotificationScheduleDocument>,
     private firebaseService: FirebaseService,
@@ -42,10 +45,15 @@ export class NotificationsService {
     await this.deviceTokenModel.deleteOne({ _id: id });
   }
 
+  async findById(id: string | ObjectId) {
+    return await this.deviceTokenModel.findById(id);
+  }
+
   async storeScheduleNotification(notificationBody: CreateNotificationBody) {
     const tmpNotification: NotificationSchedule = new NotificationSchedule();
     tmpNotification._id = (await this.idService.generateId('520')).id;
     tmpNotification.body = notificationBody.body;
+    tmpNotification.to = notificationBody.to;
     tmpNotification.title = notificationBody.title;
     tmpNotification.text = notificationBody.title;
     tmpNotification.priority = notificationBody.priority;
@@ -66,10 +74,10 @@ export class NotificationsService {
   ): Promise<Notification> {
     console.log('----------------');
 
-    const user = await this.deviceTokenModel.findById(notificationBody.user_id);
+    const user = await this.findById(notificationBody.user_id);
     if (user == null) return null;
     const notifBody: FirebaseDTO = {
-      to: user.token,
+      to: user.deviceToken,
       priority: notificationBody.priority,
       title: notificationBody.title,
       body: notificationBody.body,

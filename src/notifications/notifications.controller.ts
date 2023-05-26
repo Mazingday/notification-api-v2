@@ -39,9 +39,15 @@ export class NotificationsController {
     let notification;
     if (sendNotificationDto.date) {
       notificationBody.send_after = sendNotificationDto.date;
-      notification = await this.notificationService.storeScheduleNotification(
-        notificationBody,
+      const user = await this.notificationService.findById(
+        sendNotificationDto.userId,
       );
+      if (user) {
+        notificationBody.to = user.deviceToken;
+        notification = await this.notificationService.storeScheduleNotification(
+          notificationBody,
+        );
+      }
     } else {
       notification = await this.notificationService.sendNotification(
         notificationBody,
@@ -54,25 +60,4 @@ export class NotificationsController {
     return res.status(HttpStatus.OK).json({ notification });
   }
 
-  @UseGuards(AuthGuard('basic'))
-  @Post('/token')
-  @ApiOperation({ summary: 'Send notification' })
-  @ApiBasicAuth()
-  public async saveDeviceToken(
-    @Res() res,
-    @Req() req,
-    @Body() sendDeviceTokenDTO: SendDeviceTokenDTO,
-  ) {
-    const { userId, token, isdelete } = sendDeviceTokenDTO;
-    if (isdelete && !token) {
-      await this.notificationService.findByIdAndDelete(userId);
-      return res.status(HttpStatus.OK).json({ success: 'token deleted' });
-    } else {
-      const user = await this.notificationService.findByIdAndUpdates(
-        userId,
-        token,
-      );
-      return res.status(HttpStatus.OK).json({ user });
-    }
-  }
 }
