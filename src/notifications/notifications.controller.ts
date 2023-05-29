@@ -12,8 +12,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBasicAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateNotificationBody } from './dto/CreateNotificationBody';
 import { SendNotificationDTO } from '@dto/sendNotification';
-import { SendDeviceTokenDTO } from '@dto/sendDevideToken';
-
 import { NotificationsService } from '@services/notifications';
 
 @Controller('v2/notifications')
@@ -59,5 +57,4 @@ export class NotificationsController {
         .json({ notification: 'notification not send' });
     return res.status(HttpStatus.OK).json({ notification });
   }
-
 }

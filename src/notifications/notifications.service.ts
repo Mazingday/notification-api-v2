@@ -10,6 +10,7 @@ import {
   NotificationSchedule,
   NotificationScheduleDocument,
 } from '@schemas/notificationSchedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { FirebaseService } from '../firebaseAPI/firebase.service';
 import { CreateNotificationBody } from './dto/CreateNotificationBody';
@@ -107,5 +108,42 @@ export class NotificationsService {
     notification: Partial<Notification>,
   ): Promise<Notification> {
     return this.notificationsModel.create(notification);
+  }
+
+  @Cron('*/5 * * * * *')
+  async checkRenewal() {
+    console.log('cron: message for the notification');
+    const notificationSchedules: Array<NotificationSchedule> =
+      await this.notificationScheduleModel.find({
+        creationDate: {
+          $gte: new Date(new Date().getTime() - 60 * 60 * 1000),
+        },
+        isDelevered: false,
+      });
+    await notificationSchedules.map(
+      async (notification: NotificationSchedule) => {
+        try {
+          const notifBody: FirebaseDTO = {
+            to: notification.to,
+            priority: notification.priority,
+            title: notification.title,
+            body: notification.body,
+            text: notification.title,
+          };
+
+          const response = await this.firebaseService.sendNotifications(
+            notifBody,
+          );
+          if (response) {
+            await this.notificationScheduleModel.findOneAndUpdate(
+              { _id: notification._id, isDelevered: false },
+              { isDelevered: true },
+            );
+          }
+        } catch (e) {
+          console.log(JSON.stringify(e), notification._id);
+        }
+      },
+    );
   }
 }
