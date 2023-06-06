@@ -60,6 +60,14 @@ export class NotificationSchedule {
     description: 'Delivery date of the notification',
   })
   deliveryDate: Date;
+
+  @Prop()
+  @ApiProperty({ example: 'Type', description: 'Message' })
+  type: string;
+
+  @Prop({ type: 'mixed' })
+  @ApiProperty({ example: 'Type', description: 'Message' })
+  data: any;
 }
 
 export const NotificationScheduleSchema =

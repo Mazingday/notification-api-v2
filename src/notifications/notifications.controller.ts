@@ -33,6 +33,8 @@ export class NotificationsController {
       title: sendNotificationDto.title,
       priority: sendNotificationDto.priority,
       body: sendNotificationDto.body,
+      type: sendNotificationDto.type,
+      data: sendNotificationDto.data,
     };
     let notification;
     if (sendNotificationDto.date) {

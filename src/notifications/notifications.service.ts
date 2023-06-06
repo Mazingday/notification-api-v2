@@ -73,18 +73,20 @@ export class NotificationsService {
   public async sendNotification(
     notificationBody: CreateNotificationBody,
   ): Promise<Notification> {
-    console.log('----------------');
+    console.log('----------------1234');
 
     const user = await this.findById(notificationBody.user_id);
-    if (user == null) return null;
+    if (user.deviceToken == null) return null;
     const notifBody: FirebaseDTO = {
       to: user.deviceToken,
       priority: notificationBody.priority,
       title: notificationBody.title,
       body: notificationBody.body,
       text: notificationBody.title,
+      type: notificationBody.type,
+      data: notificationBody.data,
     };
-
+    if (user.deviceToken == null) return null;
     const response = await this.firebaseService.sendNotifications(notifBody);
     if (response) {
       const tmpNotification: Notification = new Notification();
@@ -128,7 +130,9 @@ export class NotificationsService {
             priority: notification.priority,
             title: notification.title,
             body: notification.body,
-            text: notification.title,
+            text: notification.text,
+            type: notification.type,
+            data: notification.data,
           };
 
           const response = await this.firebaseService.sendNotifications(

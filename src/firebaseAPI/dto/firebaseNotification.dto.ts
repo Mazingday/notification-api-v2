@@ -19,4 +19,10 @@ export class FirebaseDTO {
 
   @ApiProperty({ example: 'text', description: 'Body of notification' })
   text?: string;
+
+  @ApiProperty({ example: 'text', description: 'Body of notification' })
+  type?: string;
+
+  @ApiProperty({ example: 'text', description: 'Body of notification' })
+  data?: any;
 }

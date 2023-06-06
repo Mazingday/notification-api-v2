@@ -47,4 +47,16 @@ export class SendNotificationDTO {
     description: 'Target date to send the notification',
   })
   readonly date: Date;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example: 'navigate_to',
+    description: 'navigate_to of notification',
+  })
+  readonly type: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: 'data', description: 'data of notification' })
+  readonly data: any;
 }

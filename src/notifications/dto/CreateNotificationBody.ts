@@ -8,4 +8,6 @@ export interface CreateNotificationBody {
   body?: any;
   send_after?: Date;
   to?: string;
+  type?: string;
+  data?: string;
 }
