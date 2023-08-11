@@ -56,7 +56,16 @@ export class SendNotificationDTO {
   })
   readonly type: string;
 
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example: 'true',
+    description: 'is popup notification',
+  })
+  readonly isPopUp: boolean;
+
   @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ example: 'data', description: 'data of notification' })
   readonly data: any;
 }

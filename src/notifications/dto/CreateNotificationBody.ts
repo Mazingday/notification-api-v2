@@ -10,4 +10,5 @@ export interface CreateNotificationBody {
   to?: string;
   type?: string;
   data?: string;
+  isPopUp?: boolean;
 }

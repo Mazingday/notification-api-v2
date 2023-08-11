@@ -9,10 +9,6 @@ import {
   notificationDatas,
   NotificationDatasSchema,
 } from '@schemas/deviceToken';
-import {
-  NotificationSchedule,
-  NotificationScheduleSchema,
-} from '@schemas/notificationSchedule';
 
 import { IdModule } from '@modules/id';
 
@@ -26,10 +22,6 @@ import { IdModule } from '@modules/id';
       {
         name: notificationDatas.name,
         schema: NotificationDatasSchema,
-      },
-      {
-        name: NotificationSchedule.name,
-        schema: NotificationScheduleSchema,
       },
     ]),
     IdModule,

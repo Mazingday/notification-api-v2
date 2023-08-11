@@ -40,6 +40,17 @@ export class Notification {
   body: string;
 
   @Prop()
+  @ApiProperty({ example: 'true', description: 'Notification Viewed' })
+  isRead: boolean;
+
+  @Prop()
+  @ApiProperty({
+    example: 'true',
+    description: 'Notification That need to show',
+  })
+  showOnNotification: boolean;
+
+  @Prop()
   @ApiProperty({
     example: '2022-01-25T00:36:20+00:00',
     description: 'Creation date of the notification',

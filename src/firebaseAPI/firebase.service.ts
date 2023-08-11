@@ -5,7 +5,6 @@ import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NotificationResponse } from './interfaces/NotificationResponse.interface';
 import { FirebaseDTO } from './dto/firebaseNotification.dto';
-import e from 'express';
 
 @Injectable()
 export class FirebaseService {
@@ -21,35 +20,42 @@ export class FirebaseService {
       },
     };
 
-    const nofifBody = {
+    let notifBody;
+    notifBody = {
       to: body.to,
       priority: body.priority,
-      type: body.type,
-      data: body.data,
-      notification: {
+      data: {
         title: body.title,
         body: body.body,
         text: body.text,
+        type: body.type,
       },
     };
-    console.log(process.env.API_NOTIFICATIONS, nofifBody);
 
-    if (process.env.ENABLE_NOTIFICATIONS === 'true') {
-      try {
-        return await lastValueFrom(
-          this.httpService
-            .post(process.env.API_NOTIFICATIONS, nofifBody, config)
-            .pipe(
-              map((axiosResponse: AxiosResponse<NotificationResponse>) => {
-                return axiosResponse.data;
-              }),
-            ),
-        );
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
-    } else {
+    if (!body.isPopUp) {
+      notifBody = {
+        ...notifBody,
+        notification: {
+          title: body.title,
+          body: body.body,
+          text: body.text,
+          type: body.type,
+        },
+      };
+    }
+
+    try {
+      return await lastValueFrom(
+        this.httpService
+          .post(process.env.API_NOTIFICATIONS, notifBody, config)
+          .pipe(
+            map((axiosResponse: AxiosResponse<NotificationResponse>) => {
+              return axiosResponse.data;
+            }),
+          ),
+      );
+    } catch (e) {
+      console.log(e);
       return null;
     }
   }

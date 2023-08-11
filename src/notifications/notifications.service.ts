@@ -6,10 +6,6 @@ import {
   notificationDatas,
   NotificationDatasDocument,
 } from '@schemas/deviceToken';
-import {
-  NotificationSchedule,
-  NotificationScheduleDocument,
-} from '@schemas/notificationSchedule';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { FirebaseService } from '../firebaseAPI/firebase.service';
@@ -26,8 +22,6 @@ export class NotificationsService {
     private readonly notificationsModel: Model<NotificationDocument>,
     @InjectModel(notificationDatas.name)
     private readonly deviceTokenModel: Model<NotificationDatasDocument>,
-    @InjectModel(NotificationSchedule.name)
-    private readonly notificationScheduleModel: Model<NotificationScheduleDocument>,
     private firebaseService: FirebaseService,
 
     private readonly idService: IdService,
@@ -50,24 +44,22 @@ export class NotificationsService {
     return await this.deviceTokenModel.findById(id);
   }
 
-  async storeScheduleNotification(notificationBody: CreateNotificationBody) {
-    const tmpNotification: NotificationSchedule = new NotificationSchedule();
-    tmpNotification._id = (await this.idService.generateId('520')).id;
-    tmpNotification.body = notificationBody.body;
-    tmpNotification.to = notificationBody.to;
-    tmpNotification.title = notificationBody.title;
-    tmpNotification.text = notificationBody.title;
-    tmpNotification.priority = notificationBody.priority;
-    tmpNotification.creationDate = notificationBody.send_after;
-    tmpNotification.isDelevered = false;
-
-    return this.storeNotification(tmpNotification);
+  async getNotification(id: string | ObjectId) {
+    return await this.notificationsModel
+      .find({
+        userId: id,
+        showOnNotification: true,
+        isRead: false,
+      })
+      .select('text userId _id body title');
   }
 
-  public async storeNotification(
-    notification: Partial<NotificationSchedule>,
-  ): Promise<NotificationSchedule> {
-    return this.notificationScheduleModel.create(notification);
+  async updateNotificationData(id: string | ObjectId) {
+    return this.notificationsModel.findOneAndUpdate(
+      { _id: id, isRead: false },
+      { isRead: true },
+      { new: true, setDefaultsOnInsert: true, timestamps: false },
+    );
   }
 
   public async sendNotification(
@@ -85,8 +77,9 @@ export class NotificationsService {
       text: notificationBody.title,
       type: notificationBody.type,
       data: notificationBody.data,
+      isPopUp: notificationBody.isPopUp,
     };
-    if (user.deviceToken == null) return null;
+    if (user.deviceToken == null && user.notification != false) return null;
     const response = await this.firebaseService.sendNotifications(notifBody);
     if (response) {
       const tmpNotification: Notification = new Notification();
@@ -95,12 +88,13 @@ export class NotificationsService {
       tmpNotification.title = notificationBody.title;
       tmpNotification.text = notificationBody.title;
       tmpNotification.priority = notificationBody.priority;
-      tmpNotification.creationDate = new Date();
+      tmpNotification.userId = notificationBody.user_id;
 
-      tmpNotification.deliveryDate = notificationBody.send_after
-        ? new Date(notificationBody.send_after)
-        : new Date();
-      console.log(tmpNotification);
+      tmpNotification.creationDate = new Date();
+      tmpNotification.showOnNotification =
+        notificationBody.isPopUp === true ? false : true;
+      tmpNotification.isRead = false;
+      tmpNotification.deliveryDate = new Date();
       return this.saveNotification(tmpNotification);
     }
     return null;
@@ -110,44 +104,5 @@ export class NotificationsService {
     notification: Partial<Notification>,
   ): Promise<Notification> {
     return this.notificationsModel.create(notification);
-  }
-
-  @Cron('*/5 * * * * *')
-  async checkRenewal() {
-    console.log('cron: message for the notification');
-    const notificationSchedules: Array<NotificationSchedule> =
-      await this.notificationScheduleModel.find({
-        creationDate: {
-          $gte: new Date(new Date().getTime() - 60 * 60 * 1000),
-        },
-        isDelevered: false,
-      });
-    await notificationSchedules.map(
-      async (notification: NotificationSchedule) => {
-        try {
-          const notifBody: FirebaseDTO = {
-            to: notification.to,
-            priority: notification.priority,
-            title: notification.title,
-            body: notification.body,
-            text: notification.text,
-            type: notification.type,
-            data: notification.data,
-          };
-
-          const response = await this.firebaseService.sendNotifications(
-            notifBody,
-          );
-          if (response) {
-            await this.notificationScheduleModel.findOneAndUpdate(
-              { _id: notification._id, isDelevered: false },
-              { isDelevered: true },
-            );
-          }
-        } catch (e) {
-          console.log(JSON.stringify(e), notification._id);
-        }
-      },
-    );
   }
 }
