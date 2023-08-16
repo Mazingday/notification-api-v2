@@ -55,8 +55,8 @@ export class NotificationsService {
   }
 
   async updateNotificationData(id: string | ObjectId) {
-    return this.notificationsModel.findOneAndUpdate(
-      { _id: id, isRead: false },
+    return this.notificationsModel.updateMany(
+      { userId: id, isRead: false },
       { isRead: true },
       { new: true, setDefaultsOnInsert: true, timestamps: false },
     );

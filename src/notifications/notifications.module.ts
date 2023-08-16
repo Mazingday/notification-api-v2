@@ -4,6 +4,7 @@ import { NotificationsController } from '@controllers/notifications';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NotificationSchema, Notification } from '@schemas/notification';
 import { FirebaseModule } from '../firebaseAPI/firebase.module';
+import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 
 import {
   notificationDatas,
@@ -27,7 +28,7 @@ import { IdModule } from '@modules/id';
     IdModule,
     FirebaseModule,
   ],
-  providers: [NotificationsService],
+  providers: [NotificationsService, JwtStrategy],
   controllers: [NotificationsController],
   exports: [NotificationsService],
 })

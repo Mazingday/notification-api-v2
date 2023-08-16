@@ -5,12 +5,14 @@ import {
   Post,
   Get,
   Req,
-  Param,
+  Headers,
   Res,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBasicAuth, ApiOperation } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateNotificationBody } from './dto/CreateNotificationBody';
 import { SendNotificationDTO } from '@dto/sendNotification';
 import { MarkReadDTO } from '@dto/markRead';
@@ -51,32 +53,24 @@ export class NotificationsController {
     return res.status(HttpStatus.OK).json({ notification });
   }
 
-  @UseGuards(AuthGuard('basic'))
-  @Get('/fatchNotification/:id')
+  @UseGuards(JwtAuthGuard)
+  @Get('/fatchNotification')
   @ApiOperation({ summary: 'Get notification' })
   @ApiBasicAuth()
-  public async fatchNotification(
-    @Req() req,
-    @Res() res,
-    @Param('id') id: string,
-  ) {
-    const notification = await this.notificationService.getNotification(id);
+  public async fatchNotification(@Req() req, @Res() res) {
+    const notification = await this.notificationService.getNotification(
+      req.user._id,
+    );
 
     return res.status(HttpStatus.OK).json({ notification });
   }
 
-  @UseGuards(AuthGuard('basic'))
-  @Post('/markRead')
+  @UseGuards(JwtAuthGuard)
+  @Patch('/markRead')
   @ApiOperation({ summary: 'mark read notification' })
-  @ApiBasicAuth()
-  public async markReadNotification(
-    @Res() res,
-    @Req() req,
-    @Body() markReadDto: MarkReadDTO,
-  ) {
-    const notificationId = markReadDto.notificationId;
-
-    await this.notificationService.updateNotificationData(notificationId);
+  public async markReadNotification(@Res() res, @Req() req) {
+    await this.notificationService.updateNotificationData(req.user._id);
+    console.log(req.user._id);
 
     return res
       .status(HttpStatus.OK)
