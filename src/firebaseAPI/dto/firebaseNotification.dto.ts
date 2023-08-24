@@ -24,7 +24,13 @@ export class FirebaseDTO {
   type?: string;
 
   @ApiProperty({ example: 'text', description: 'Body of notification' })
-  isPopUp?: boolean;
+  isDialog?: boolean;
+
+  @ApiProperty({ example: 'text', description: 'Body of notification' })
+  dialogType?: string;
+
+  @ApiProperty({ example: 'text', description: 'Body of notification' })
+  navigateTo?: string;
 
   @ApiProperty({ example: 'text', description: 'Body of notification' })
   data?: any;

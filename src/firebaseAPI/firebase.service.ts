@@ -24,15 +24,21 @@ export class FirebaseService {
     notifBody = {
       to: body.to,
       priority: body.priority,
-      data: {
-        title: body.title,
-        body: body.body,
-        text: body.text,
-        type: body.type,
-      },
+      content_available: true,
     };
 
-    if (!body.isPopUp) {
+    if (body.isDialog) {
+      notifBody = {
+        ...notifBody,
+        data: {
+          title: body.title,
+          body: body.body,
+          text: body.text,
+          type: body.type,
+          dialogType: body.dialogType,
+        },
+      };
+    } else {
       notifBody = {
         ...notifBody,
         notification: {
@@ -41,9 +47,16 @@ export class FirebaseService {
           text: body.text,
           type: body.type,
         },
+        data: {
+          title: body.title,
+          body: body.body,
+          text: body.text,
+          type: body.type,
+          navigateTo: body.navigateTo,
+        },
       };
     }
-
+    console.log(notifBody);
     try {
       return await lastValueFrom(
         this.httpService

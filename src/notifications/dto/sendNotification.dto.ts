@@ -7,6 +7,7 @@ import {
   IsDateString,
   ValidateIf,
   IsEmail,
+  IsBoolean,
 } from 'class-validator';
 
 export class SendNotificationDTO {
@@ -59,10 +60,34 @@ export class SendNotificationDTO {
   @IsString()
   @IsOptional()
   @ApiProperty({
-    example: 'true',
-    description: 'is popup notification',
+    example: 'navigate_to',
+    description: 'navigate_to of notification',
   })
-  readonly isPopUp: boolean;
+  readonly navigateTo: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    example: 'dialogType',
+    description: 'dialogType of notification',
+  })
+  readonly dialogType: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    example: 'true',
+    description: 'is Dialog notification',
+  })
+  readonly isDialog: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    example: 'true',
+    description: 'is Friend Request notification',
+  })
+  readonly isFriendRequest: boolean;
 
   @IsNotEmpty()
   @IsOptional()

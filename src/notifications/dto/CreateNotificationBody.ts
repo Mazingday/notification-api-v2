@@ -10,5 +10,8 @@ export interface CreateNotificationBody {
   to?: string;
   type?: string;
   data?: string;
-  isPopUp?: boolean;
+  isDialog?: boolean;
+  isFriendRequest?: boolean;
+  navigateTo?: string;
+  dialogType?: string;
 }

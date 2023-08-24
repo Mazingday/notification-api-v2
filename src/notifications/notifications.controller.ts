@@ -40,7 +40,10 @@ export class NotificationsController {
       body: sendNotificationDto.body,
       type: sendNotificationDto.type,
       data: sendNotificationDto.data,
-      isPopUp: sendNotificationDto.isPopUp,
+      isDialog: sendNotificationDto.isDialog,
+      navigateTo: sendNotificationDto.navigateTo,
+      dialogType: sendNotificationDto.dialogType,
+      isFriendRequest: sendNotificationDto.isFriendRequest,
     };
 
     const notification = await this.notificationService.sendNotification(

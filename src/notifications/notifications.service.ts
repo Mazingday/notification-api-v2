@@ -51,7 +51,7 @@ export class NotificationsService {
         showOnNotification: true,
         isRead: false,
       })
-      .select('text userId _id body title');
+      .select('text userId _id body title deliveryDate');
   }
 
   async updateNotificationData(id: string | ObjectId) {
@@ -77,7 +77,9 @@ export class NotificationsService {
       text: notificationBody.title,
       type: notificationBody.type,
       data: notificationBody.data,
-      isPopUp: notificationBody.isPopUp,
+      isDialog: notificationBody.isDialog,
+      navigateTo: notificationBody.navigateTo,
+      dialogType: notificationBody.dialogType,
     };
     if (user.deviceToken == null && user.notification != false) return null;
     const response = await this.firebaseService.sendNotifications(notifBody);
@@ -92,7 +94,10 @@ export class NotificationsService {
 
       tmpNotification.creationDate = new Date();
       tmpNotification.showOnNotification =
-        notificationBody.isPopUp === true ? false : true;
+        notificationBody.isDialog === true ||
+        notificationBody.isFriendRequest === true
+          ? false
+          : true;
       tmpNotification.isRead = false;
       tmpNotification.deliveryDate = new Date();
       return this.saveNotification(tmpNotification);
