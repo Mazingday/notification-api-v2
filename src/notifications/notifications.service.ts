@@ -62,6 +62,19 @@ export class NotificationsService {
     );
   }
 
+  async getNotificationCounts(id: string | ObjectId, date: Date) {
+    const getNotif = await this.notificationsModel
+      .find({
+        userId: id,
+        isRead: false,
+      })
+      .select('text userId _id body title deliveryDate');
+    const result = getNotif.filter(
+      (item) => new Date(date) <= new Date(item.deliveryDate),
+    );
+    return result;
+  }
+
   public async sendNotification(
     notificationBody: CreateNotificationBody,
   ): Promise<Notification> {

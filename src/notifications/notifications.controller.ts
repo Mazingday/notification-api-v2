@@ -15,6 +15,8 @@ import { ApiBasicAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateNotificationBody } from './dto/CreateNotificationBody';
 import { SendNotificationDTO } from '@dto/sendNotification';
+import { DateDTO } from '@dto/dateDto';
+
 import { MarkReadDTO } from '@dto/markRead';
 
 import { NotificationsService } from '@services/notifications';
@@ -78,5 +80,23 @@ export class NotificationsController {
     return res
       .status(HttpStatus.OK)
       .json({ success: true, message: 'Notification Data updated' });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/notificationCount')
+  @ApiOperation({ summary: 'mark read notification' })
+  public async getNotificationCount(
+    @Res() res,
+    @Body() dateDto: DateDTO,
+    @Req() req,
+  ) {
+    const countNotif = await this.notificationService.getNotificationCounts(
+      req.user._id,
+      dateDto.date,
+    );
+
+    return res
+      .status(HttpStatus.OK)
+      .json({ success: true, count: countNotif.length });
   }
 }
